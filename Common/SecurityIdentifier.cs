@@ -585,6 +585,18 @@ namespace QuantConnect
         }
 
         /// <summary>
+        /// Gets the last ticker from a given security identifier
+        /// </summary>
+        /// <param name="securityIdentifier">SecurityIdentifier for which we get the last ticker of</param>
+        /// <returns>String representing the last ticker</returns>
+        public static string GetLastTicker(SecurityIdentifier securityIdentifier)
+        {
+            var resolver = MapFileProvider.Value.Get(securityIdentifier.Market);
+            var mapFile = resolver.ResolveMapFile(securityIdentifier.Symbol, DateTime.Today);
+            return mapFile.LastTicker;
+        }
+
+        /// <summary>
         /// Resolves the first ticker/date of the security represented by <paramref name="tickerToday"/>
         /// </summary>
         /// <param name="mapFileProvider">The IMapFileProvider instance used for resolving map files</param>

@@ -308,6 +308,17 @@ namespace QuantConnect.Tests.Common.Securities
         }
 
         [Test]
+        public void ParsesFromStringCorrectlyAndGetLastTicker()
+        {
+            const string value = "NB R735QTJ8XC9X";
+            SecurityIdentifier sid;
+            Assert.IsTrue(SecurityIdentifier.TryParse(value, out sid));
+            Assert.AreEqual(sid.ToString(), value);
+            var ticker = SecurityIdentifier.GetLastTicker(sid);
+            Assert.AreEqual("BAC", ticker);
+        }
+
+        [Test]
         public void TryParseFailsInvalidProperties()
         {
             const string value = "SPY WhatEver";

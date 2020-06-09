@@ -53,6 +53,11 @@ namespace QuantConnect.Data.Auxiliary
         public string FirstTicker { get; }
 
         /// <summary>
+        /// Gets the last ticker for the security represented by this map file
+        /// </summary>
+        public string LastTicker { get; }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="MapFile"/> class.
         /// </summary>
         public MapFile(string permtick, IEnumerable<MapFileRow> data)
@@ -73,21 +78,28 @@ namespace QuantConnect.Data.Auxiliary
             }
 
             var firstTicker = GetMappedSymbol(FirstDate, Permtick);
-            if (char.IsDigit(firstTicker.Last()))
+            var lastTicker = GetMappedSymbol(DelistingDate, Permtick);
+
+            Func<string, string> removeLastDigitIfAny = ticker =>
             {
-                var dotIndex = firstTicker.LastIndexOf(".", StringComparison.Ordinal);
-                if (dotIndex > 0)
+                if (char.IsDigit(ticker.Last()))
                 {
-                    int value;
-                    var number = firstTicker.Substring(dotIndex + 1);
-                    if (int.TryParse(number, out value))
+                    var dotIndex = ticker.LastIndexOf(".", StringComparison.Ordinal);
+                    if (dotIndex > 0)
                     {
-                        firstTicker = firstTicker.Substring(0, dotIndex);
+                        int value;
+                        var number = ticker.Substring(dotIndex + 1);
+                        if (int.TryParse(number, out value))
+                        {
+                            return ticker.Substring(0, dotIndex);
+                        }
                     }
                 }
-            }
+                return ticker;
+            };
 
-            FirstTicker = firstTicker;
+            FirstTicker = removeLastDigitIfAny(firstTicker);
+            LastTicker = removeLastDigitIfAny(lastTicker);
         }
 
         /// <summary>

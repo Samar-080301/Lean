@@ -1457,6 +1457,21 @@ namespace QuantConnect.Algorithm
         }
 
         /// <summary>
+        /// Set a required SecurityType-symbol and resolution for algorithm
+        /// </summary>
+        /// <param name="symbol">The security Symbol</param>
+        /// <param name="resolution">Resolution of the MarketType required: MarketData, Second or Minute</param>
+        /// <param name="fillDataForward">If true, returns the last available data even if none in that timeslice.</param>
+        /// <param name="leverage">leverage for this security</param>
+        /// <param name="extendedMarketHours">ExtendedMarketHours send in data from 4am - 8pm, not used for FOREX</param>
+        /// <returns></returns>
+        public Security AddSecurity(Symbol symbol, Resolution? resolution = null, bool fillDataForward = true, decimal leverage = Security.NullLeverage, bool extendedMarketHours = false)
+        {
+            var mappedSymbol = SecurityIdentifier.GetLastTicker(symbol.ID);
+            return AddSecurity(symbol.SecurityType, mappedSymbol, resolution, symbol.ID.Market, fillDataForward, leverage, extendedMarketHours);
+        }
+
+        /// <summary>
         /// Creates and adds a new <see cref="Equity"/> security to the algorithm
         /// </summary>
         /// <param name="ticker">The equity ticker symbol</param>
